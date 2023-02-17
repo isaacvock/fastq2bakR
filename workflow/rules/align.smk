@@ -13,8 +13,8 @@ rule align:
         extra="--outSAMtype BAM SortedByCoordinate --quantMode TranscriptomeSAM GeneCounts --sjdbGTFfile {} {}".format(
             "resources/genome.gtf", config["params"]["star"]
         ),
-    threads: 24
     conda:
         "../envs/star.yaml"
+    threads: 24
     script: 
         "../scripts/star-align.py"
