@@ -84,4 +84,4 @@ with tempfile.TemporaryDirectory() as tmpdir:
     if snakemake.output.get("log_final"):
         shell("cat {tmpdir}/Log.final.out > {snakemake.output.log_final:q}")
     if snakemake.output.get("aln_tx"):
-        shell("cat {tmpdir}/Aligned.toTranscriptome.bam > {snakemake.output.aln_tx:q}")
+        shell("cat {tmpdir}/Aligned.toTranscriptome.out.bam > {snakemake.output.aln_tx:q}")
