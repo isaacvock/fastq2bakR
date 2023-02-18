@@ -14,17 +14,6 @@ samples = (
     .sort_index()
 )
 
-
-def get_final_output():
-    final_output = expand(
-        "results/diffexp/{contrast}.diffexp.tsv",
-        contrast=config["diffexp"]["contrasts"],
-    )
-    final_output.append("results/deseq2/normcounts.tsv")
-    final_output.append("results/counts/all.tsv")
-    return final_output
-
-
 validate(samples, schema="../schemas/samples.schema.yaml")
 
 units = (
@@ -33,6 +22,22 @@ units = (
     .sort_index()
 )
 validate(units, schema="../schemas/units.schema.yaml")
+
+
+def get_final_output():
+    names = list(units.index.values)
+    final_output = expand(
+        "results/diffexp/{contrast}.diffexp.tsv",
+        contrast=config["diffexp"]["contrasts"],
+    )
+    final_output.append("results/deseq2/normcounts.tsv")
+    final_output.append("results/counts/all.tsv")
+    final_output.append(expand(
+        "results/rsem/{S}-{U}.genes.results",
+        S=list(zip(*names))[0],
+        U=list(zip(*names))[1],
+    ))
+    return final_output
 
 
 def get_cutadapt_input(wildcards):
