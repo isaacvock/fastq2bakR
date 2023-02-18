@@ -29,7 +29,7 @@ rule quantify:
         isoforms_results="results/rsem/{sample}-{unit}.isoforms.results",
     params:
         # optional, specify if sequencing is paired-end
-        paired-end=True,
+        paired_end=True,
         # additional optional parameters to pass to rsem, for example,
         extra="--seed 42",
     log:
