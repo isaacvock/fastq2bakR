@@ -70,6 +70,7 @@ rule star_index:
     wrapper:
         "v1.21.4/bio/star/index"
 
+
 rule RSEM_index:
     input:
         reference_genome="resources/genome.fasta",

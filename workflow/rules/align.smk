@@ -19,6 +19,7 @@ rule align:
     script: 
         "../scripts/star-align.py"
 
+
 rule quantify:
     input:
         bam="results/star{sample}-{unit}/Aligned.toTranscriptome.out.bam",
