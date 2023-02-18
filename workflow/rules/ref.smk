@@ -79,7 +79,7 @@ rule RSEM_index:
         grp="index/reference.grp",
         ti="index/reference.ti",
         tfa="index/reference.transcripts.fa".
-        idx="index/reference.idx.fa",
+        idxfa="index/reference.idx.fa",
         n2g="index/reference.n2g.idx.fa",
     params:
         extra="--gtf resources/genome.gtf",
