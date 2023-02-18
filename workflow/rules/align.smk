@@ -26,7 +26,7 @@ rule quantify:
         reference=multiext("index/reference", ".grp", ".ti", ".transcripts.fa", ".seq", ".idx.fa", ".n2g.idx.fa"),
     output:
         genes_results="results/rsem/{sample}-{unit}.genes.results",
-        isoform_results="results/rsem/{sample}-{unit}.isoforms.results",
+        isoforms_results="results/rsem/{sample}-{unit}.isoforms.results",
     log:
         "logs/rsem/calculate_expression/{sample}-{unit}.log",
     threads: 2
