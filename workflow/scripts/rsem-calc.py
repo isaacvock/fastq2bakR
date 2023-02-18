@@ -66,9 +66,17 @@ reference_prefix = os.path.splitext(snakemake.input.reference[0])[0]
 extra = snakemake.params.get("extra", "")
 threads = snakemake.threads
 log = snakemake.log_fmt_shell(stdout=True, stderr=True)
-shell(
+if paired_end:
+    shell(
     "rsem-calculate-expression --paired-end --num-threads {snakemake.threads} {extra} "
     "{input_bam} {input_string} "
     "{reference_prefix} {output_prefix} "
     "{log}"
-)
+    )
+else:
+    shell(
+    "rsem-calculate-expression --num-threads {snakemake.threads} {extra} "
+    "{input_bam} {input_string} "
+    "{reference_prefix} {output_prefix} "
+    "{log}"
+    )
