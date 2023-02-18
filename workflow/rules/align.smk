@@ -22,7 +22,7 @@ rule align:
 
 rule quantify:
     input:
-        bam="results/star{sample}-{unit}/Aligned.toTranscriptome.out.bam",
+        bam="results/star/{sample}-{unit}/Aligned.toTranscriptome.out.bam",
         reference=multiext("index/reference", ".grp", ".ti", ".transcripts.fa", ".seq", ".idx.fa", ".n2g.idx.fa"),
     output:
         genes_results="results/rsem/{sample}-{unit}.genes.results",
