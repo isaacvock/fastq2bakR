@@ -28,7 +28,7 @@ rule quantify:
         genes_results="results/rsem/{sample}-{unit}.genes.results",
         isoforms_results="results/rsem/{sample}-{unit}.isoforms.results",
     params:
-        paired_end=is_paired_end(wildcards.sample),
+        paired_end=lambda w: is_paired_end(w.sample),
     log:
         "logs/rsem/calculate_expression/{sample}-{unit}.log",
     threads: 2
