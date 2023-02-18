@@ -78,7 +78,7 @@ rule RSEM_index:
         seq="index/reference.seq",
         grp="index/reference.grp",
         ti="index/reference.ti",
-        tfa="index/reference.transcripts.fa".
+        tfa="index/reference.transcripts.fa",
         idxfa="index/reference.idx.fa",
         n2g="index/reference.n2g.idx.fa",
     params:
