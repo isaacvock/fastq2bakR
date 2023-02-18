@@ -75,7 +75,7 @@ if paired_end:
     )
 else:
     shell(
-    "rsem-calculate-expression --num-threads {snakemake.threads} {extra} "
+    "rsem-calculate-expression --paired-end --num-threads {snakemake.threads} {extra} "
     "{input_bam} {input_string} "
     "{reference_prefix} {output_prefix} "
     "{log}"
