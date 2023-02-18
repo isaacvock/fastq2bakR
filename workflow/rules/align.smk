@@ -33,7 +33,9 @@ rule quantify:
         # additional optional parameters to pass to rsem, for example,
         extra="--seed 42",
     log:
-        "logs/rsem/calculate_expression/a.log",
+        "logs/rsem/calculate_expression/{sample}-{unit}.log",
+    conda:
+        "../envs/rsem.yaml"
     threads: 2
-    wrapper:
-        "v1.23.4/bio/rsem/calculate-expression"
+    script:
+        "../scripts/rsem-calc.py"
