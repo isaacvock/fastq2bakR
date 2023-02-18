@@ -28,9 +28,12 @@ rule quantify:
         genes_results="results/rsem/{sample}-{unit}.genes.results",
         isoforms_results="results/rsem/{sample}-{unit}.isoforms.results",
     params:
+        # optional, specify if sequencing is paired-end
         paired_end=True,
+        # additional optional parameters to pass to rsem, for example,
+        extra="--seed 42",
     log:
-        "logs/rsem/calculate_expression/{sample}-{unit}.log",
+        "logs/rsem/calculate_expression/a.log",
     threads: 2
     wrapper:
         "v1.23.4/bio/rsem/calculate-expression"
