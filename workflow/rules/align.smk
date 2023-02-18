@@ -28,7 +28,7 @@ rule quantify:
         genes_results="results/rsem/{sample}-{unit}.genes.results",
         isoform_results="results/rsem/{sample}-{unit}.isoforms.results",
     log:
-        "logs/rsem/calculate_expression/a.log",
+        "logs/rsem/calculate_expression/{sample}-{unit}.log",
     threads: 2
     wrapper:
         "v1.23.4/bio/rsem/calculate-expression"
