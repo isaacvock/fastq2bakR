@@ -69,3 +69,20 @@ rule star_index:
     cache: True
     wrapper:
         "v1.21.4/bio/star/index"
+
+rule RSEM_index:
+    input:
+        reference_genome="resources/genome.fasta",
+    output:
+        seq="index/reference.seq",
+        grp="index/reference.grp",
+        ti="index/reference.ti",
+        tfa="index/reference.transcripts.fa".
+        idx="index/reference.idx.fa",
+        n2g="index/reference.n2g.idx.fa",
+    params:
+        extra="--gtf resources/genome.gtf",
+    log:
+        "logs/rsem/prepare-reference.log",
+    wrapper:
+        "v1.23.4/bio/rsem/prepare-reference"

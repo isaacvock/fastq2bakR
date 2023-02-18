@@ -18,3 +18,16 @@ rule align:
     threads: 24
     script: 
         "../scripts/star-align.py"
+
+rule quantify:
+    input:
+        bam="results/star{sample}-{unit}/Aligned.toTranscriptome.out.bam",
+        reference=multiext("index/reference", ".grp", ".ti", ".transcripts.fa", ".seq", ".idx.fa", ".n2g.idx.fa"),
+    output:
+        genes_results="results/rsem/{sample}-{unit}.genes.results",
+        isoform_results="results/rsem/{sample}-{unit}.isoforms.results",
+    log:
+        "logs/rsem/calculate_expression/a.log",
+    threads: 2
+    wrapper:
+        "v1.23.4/bio/rsem/calculate-expression"
