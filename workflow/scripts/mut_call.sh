@@ -7,12 +7,10 @@ input=$3
 input_snp=$4
 output=$5
 output2=$6
-awkscript=$7
-fragment_size=$8
-minqual=$9
-mut_tracks=${10}
-mutcall=${11}
-format=${12}
+fragment_size=$7
+minqual=$8
+mut_tracks=$9
+format=${10}
 
 # Create results/counts/
 touch "$output2"
@@ -51,7 +49,7 @@ touch "$output2"
     	| awk \
     		-v fragment_size="$newFragmentSize" \
     		-v sample="$sample" \
-    		-f "$awkscript" &&
+    		-f "./workflow/scripts/fragment_sam.awk" &&
 
     for f in $(seq 1 $newFragmentNumber); do
         samtools view -@ "$cpus" -o ./results/counts/"$f"_"$sample"_frag.bam ./results/counts/"$f"_"$sample".sam
@@ -71,7 +69,7 @@ touch "$output2"
 ## Need to add mutation call script to scripts!
 
 # Call mutations
-    parallel -j $cpus "python $mutcall -b {1} \
+    parallel -j $cpus "python ./workflow/scripts/mut_call.py -b {1} \
                                               --mutType $mut_tracks \
                                               --minQual $minqual \
 											  --SNPs "./results/snps/snp.txt" \

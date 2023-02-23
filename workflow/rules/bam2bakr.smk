@@ -69,7 +69,7 @@ rule htseq_cnt:
     conda:
         "../envs/htseq.yaml"
     shell:
-        "workflow/scripts/htseq.sh {threads} {wildcards.sample} {input} {output} {config[mutcnt]}"
+        "workflow/scripts/htseq.sh {threads} {wildcards.sample} {input} {output}"
 
 rule normalize:
     input:
@@ -120,7 +120,7 @@ rule cnt_muts:
     conda:
         "../envs/cnt_muts.yaml"
     shell:
-        "workflow/scripts/mut_call.sh {threads} {wildcards.sample} {input} {output} {config[awkscript]} {config[fragment_size]} {config[minqual]} {config[mut_tracks]} {config[mutcall]} {params.format}"
+        "workflow/scripts/mut_call.sh {threads} {wildcards.sample} {input} {output} {config[fragment_size]} {config[minqual]} {config[mut_tracks]} {params.format}"
 
 rule maketdf:
     input:
