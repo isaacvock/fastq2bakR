@@ -10,7 +10,7 @@ rule merge_bams:
     conda:
         "../envs/cnt_muts.yaml"
     shell:
-        "samtools merge -@ {threads} {output.merged_bam} {input.bamfiles}"
+        "samtools merge -@ {threads} {input.bamfiles} | samtools sort -n - {output.bamfiles}"
 
 
 rule sort_filter:
