@@ -4,13 +4,10 @@ CTL_NAMES = list(config['control_samples'])
 
 nctl = len(CTL_NAMES)
 
-def get_input_bams(wildcards):
-    return config["samples"][wildcards.sample]
-
 
 rule sort_filter:
     input:
-        get_input_bams
+        "results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam",
     output:
         "results/sf_reads/{sample}.s.sam",
         "results/sf_reads/{sample}_fixed_mate.bam",

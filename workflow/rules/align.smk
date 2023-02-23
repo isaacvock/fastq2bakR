@@ -10,7 +10,7 @@ rule align:
         "logs/star/{sample}-{unit}.log",
     params:
         idx=lambda wc, input: input.index,
-        extra="--outSAMtype BAM SortedByCoordinate --quantMode TranscriptomeSAM GeneCounts --sjdbGTFfile {} {}".format(
+        extra="--outSAMtype BAM SortedByCoordinate --outSAMattributes NH HI AS NM MD --quantMode TranscriptomeSAM GeneCounts --sjdbGTFfile {} {}".format(
             "resources/genome.gtf", config["params"]["star"]
         ),
     conda:
