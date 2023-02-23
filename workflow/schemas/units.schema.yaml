@@ -30,3 +30,4 @@ properties:
 required:
   - sample_name
   - unit_name
+  - s4U
