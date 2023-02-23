@@ -25,6 +25,9 @@ inputfiles = pd.read_csv(config["units"], sep="\t", dtype={"sample_name": str, "
 def filter_bamfiles(wildcards):
     return "results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam".format(sample=wildcards.sample, unit=inputfiles[inputfiles['sample_name'] == wildcards.sample]['unit_name'].values[0])
 
+def get_format(wildcards):
+    return is_paired_end(wildcards.sample)
+
 rule merge_bams:
     input:
         bamfiles=filter_bamfiles
@@ -43,7 +46,7 @@ rule sort_filter:
     input:
         "results/merge_bams/{sample}.merged.bam",
     params:
-        format="SE" if not is_paired_end(wildcards.sample) else "PE"
+        format = lambda wildcards: "SE" if get_format(wildcards) else "PE"
     output:
         "results/sf_reads/{sample}.s.sam",
         "results/sf_reads/{sample}_fixed_mate.bam",
@@ -110,7 +113,7 @@ rule cnt_muts:
         "results/htseq/{sample}_tl.bam",
         "results/snps/snp.txt"
     params:
-        format="SE" if not is_paired_end(wildcards.sample) else "PE"
+        format = lambda wildcards: "SE" if get_format(wildcards) else "PE"
     output:
         "results/counts/{sample}_counts.csv.gz",
         temp("results/counts/{sample}_check.txt")
