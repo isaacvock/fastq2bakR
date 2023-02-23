@@ -23,6 +23,30 @@ units = (
 )
 validate(units, schema="../schemas/units.schema.yaml")
 
+# For getting sample and control names
+unit_s4U = (
+    pd.read_csv(config["units"], sep="\t", dtype={"sample_name": str, "unit_name": str})
+    .set_index(["sample_name", "unit_name", "s4U"], drop=False)
+    .sort_index()
+)
+
+# Get all sample and -s4U control sample names
+names = list(unit_s4U.index.values)
+SAMP_NAMES = list(zip(*names))[0]
+UNIT_NAMES = list(zip(*names))[1]
+S4U = list(zip(*names))[2]
+CTL_NAMES = list([SAMP_NAMES[i] for i in range(len(SAMP_NAMES)) if S4U[i] == 'no'])
+nctl = len(CTL_NAMES)
+
+# Get input file names for figuring out which bams should be merged
+inputfiles = pd.read_csv(config["units"], sep="\t", dtype={"sample_name": str, "unit_name": str})
+
+# Define a function to filter the input BAM files by sample name
+def filter_bamfiles(wildcards):
+    return "results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam".format(sample=wildcards.sample, unit=inputfiles[inputfiles['sample_name'] == wildcards.sample]['unit_name'].values[0])
+
+def get_format(wildcards):
+    return is_paired_end(wildcards.sample)
 
 def get_final_output():
     names = list(units.index.values)

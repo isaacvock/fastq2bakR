@@ -1,32 +1,3 @@
-import glob
-
-import pandas as pd
-
-unit_s4U = (
-    pd.read_csv(config["units"], sep="\t", dtype={"sample_name": str, "unit_name": str})
-    .set_index(["sample_name", "unit_name", "s4U"], drop=False)
-    .sort_index()
-)
-
-names = list(unit_s4U.index.values)
-
-
-SAMP_NAMES = list(zip(*names))[0]
-UNIT_NAMES = list(zip(*names))[1]
-S4U = list(zip(*names))[2]
-
-CTL_NAMES = list([SAMP_NAMES[i] for i in range(len(SAMP_NAMES)) if S4U[i] == 'no'])
-
-nctl = len(CTL_NAMES)
-
-inputfiles = pd.read_csv(config["units"], sep="\t", dtype={"sample_name": str, "unit_name": str})
-
-# Define a function to filter the input BAM files by sample name
-def filter_bamfiles(wildcards):
-    return "results/star/{sample}-{unit}/Aligned.sortedByCoord.out.bam".format(sample=wildcards.sample, unit=inputfiles[inputfiles['sample_name'] == wildcards.sample]['unit_name'].values[0])
-
-def get_format(wildcards):
-    return is_paired_end(wildcards.sample)
 
 rule merge_bams:
     input:
@@ -79,6 +50,8 @@ rule normalize:
         expand("results/htseq/{sample}_tl.bam", sample = SAMP_NAMES)
     output:
         "results/normalization/scale"
+    params:
+        spikename = config["spikename"]
     log:
         "logs/normalize/normalize.log"
     threads: 1
@@ -86,7 +59,7 @@ rule normalize:
         "../envs/normalize.yaml"
     shell:
         r"""
-       	./workflow/scripts/normalize.R --dirs ./results/htseq/ --spikename {config[spikename]}
+       	./workflow/scripts/normalize.R --dirs ./results/htseq/ --spikename {params.spikename}
 	mv scale {output}
         """
 
@@ -113,7 +86,10 @@ rule cnt_muts:
         "results/htseq/{sample}_tl.bam",
         "results/snps/snp.txt"
     params:
-        format = lambda wildcards: "SE" if get_format(wildcards) else "PE"
+        format = lambda wildcards: "SE" if get_format(wildcards) else "PE",
+        fragment_size = config["fragment_size"],
+        minqual = config["minqual"],
+        mut_tracks = config["mut_tracks"]
     output:
         "results/counts/{sample}_counts.csv.gz",
         temp("results/counts/{sample}_check.txt")
@@ -123,7 +99,7 @@ rule cnt_muts:
     conda:
         "../envs/cnt_muts.yaml"
     shell:
-        "workflow/scripts/mut_call.sh {threads} {wildcards.sample} {input} {output} {config[fragment_size]} {config[minqual]} {config[mut_tracks]} {params.format}"
+        "workflow/scripts/mut_call.sh {threads} {wildcards.sample} {input} {output} {params.fragment_size} {params.minqual} {params.mut_tracks} {params.format}"
 
 rule maketdf:
     input:
@@ -131,18 +107,27 @@ rule maketdf:
         "results/htseq/{sample}_tl.bam",
 	    "results/normalization/scale",
         "resources/genome.fasta",
+    params:
+        mut_tracks = config["mut_tracks"],
+        wsl = config["WSL"],
+        normalize = config["normalize"]
     output:
         temp("results/tracks/{sample}_success.txt"),
         expand("results/tracks/{{sample}}.{mut}.{id}.{strand}.tdf", mut=config["mut_tracks"], id=[0,1,2,3,4,5], strand = ['pos', 'min'])
+    log:
+        "logs/maketdf/{sample}.log"
     threads: workflow.cores
     conda:
         "../envs/tracks.yaml"
     shell:
-        "workflow/scripts/tracks.sh {threads} {wildcards.sample} {input} {config[mut_tracks]} {config[WSL]} {config[normalize]} {output}"
+        "workflow/scripts/tracks.sh {threads} {wildcards.sample} {input} {params.mut_tracks} {params.wsl} {params.normalize} {output}"
 
 rule makecB:
     input:
         expand("results/counts/{sample}_counts.csv.gz", sample=config["samples"])
+    params:
+        mut_tracks = config["mut_tracks"],
+        keepcols = config["keepcols"]
     output:
         "results/cB/cB.csv.gz"
     log:
@@ -151,4 +136,4 @@ rule makecB:
     conda:
         "../envs/cB.yaml"
     shell:
-        "workflow/scripts/master.sh {threads} {output} {config[keepcols]} {config[mut_tracks]}"
+        "workflow/scripts/master.sh {threads} {output} {params.keepcols} {params.mut_tracks}"
