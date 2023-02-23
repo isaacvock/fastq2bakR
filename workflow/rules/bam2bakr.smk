@@ -8,7 +8,7 @@ rule merge_bams:
         "logs/merge_bams/{sample}.log"
     threads: workflow.cores
     conda:
-        "../envs/merge.yaml"
+        "../envs/cnt_muts.yaml"
     shell:
         "samtools merge -@ {threads} {output.merged_bam} {input.bamfiles}"
 
@@ -26,7 +26,7 @@ rule sort_filter:
         "logs/sort_filter/{sample}.log"
     threads: workflow.cores
     conda:
-        "../envs/sort.yaml"
+        "../envs/cnt_muts.yaml"
     shell:
         "./workflow/scripts/sort_filter.sh {threads} {wildcards.sample} {input} {output} {params.format}"
 
@@ -41,7 +41,7 @@ rule htseq_cnt:
         "logs/htseq_cnt/{sample}.log"
     threads: workflow.cores
     conda:
-        "../envs/htseq.yaml"
+        "../envs/cnt_muts.yaml"
     shell:
         "./workflow/scripts/htseq.sh {threads} {wildcards.sample} {input} {output}"
 
@@ -77,7 +77,7 @@ rule call_snps:
         "logs/call_snps/ctl_samps.log"
     threads: workflow.cores
     conda:
-        "../envs/snps.yaml"
+        "../envs/cnt_muts.yaml"
     shell:
         "./workflow/scripts/call_snps.sh {threads} {params.nsamps} {output} {input}"
 
@@ -134,6 +134,6 @@ rule makecB:
         "logs/makecB/master.log"
     threads: workflow.cores
     conda:
-        "../envs/cB.yaml"
+        "../envs/cnt_muts.yaml"
     shell:
         "./workflow/scripts/master.sh {threads} {output} {params.keepcols} {params.mut_tracks}"
