@@ -5,7 +5,7 @@ rule count_matrix:
             unit=units.itertuples(),
         ),
     output:
-        "results/counts/all.tsv",
+        "results/count_matrix/all.tsv",
     log:
         "logs/count-matrix.log",
     params:
@@ -19,7 +19,7 @@ rule count_matrix:
 
 rule deseq2_init:
     input:
-        counts="results/counts/all.tsv",
+        counts="results/count_matrix/all.tsv",
     output:
         "results/deseq2/all.rds",
         "results/deseq2/normcounts.tsv",
