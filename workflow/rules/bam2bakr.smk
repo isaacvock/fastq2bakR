@@ -22,7 +22,8 @@ rule sort_filter:
 
 rule htseq_cnt:
     input:
-        "results/sf_reads/{sample}.s.sam"
+        "results/sf_reads/{sample}.s.sam",
+        "resources/genome.gtf",
     output:
         "results/htseq/{sample}_tl.bam",
         temp("results/htseq/{sample}_check.txt")
@@ -32,7 +33,7 @@ rule htseq_cnt:
     conda:
         "../envs/htseq.yaml"
     shell:
-        "workflow/scripts/htseq.sh {threads} {wildcards.sample} {input} {output} {config[annotation]} {config[mutcnt]}"
+        "workflow/scripts/htseq.sh {threads} {wildcards.sample} {input} {output} {config[mutcnt]}"
 
 rule normalize:
     input:
@@ -53,6 +54,7 @@ rule normalize:
 
 rule call_snps:
     input:
+        "resources/genome.fasta",
         expand("results/htseq/{ctl}_tl.bam", ctl = CTL_NAMES)
     params:
         nsamps = nctl
@@ -65,7 +67,7 @@ rule call_snps:
     conda:
         "../envs/snps.yaml"
     shell:
-        "workflow/scripts/call_snps.sh {threads} {params.nsamps} {output} {config[genome_fasta]} {input}"
+        "workflow/scripts/call_snps.sh {threads} {params.nsamps} {output} {input}"
 
 rule cnt_muts:
     input:
@@ -86,7 +88,8 @@ rule maketdf:
     input:
         "results/counts/{sample}_counts.csv.gz",
         "results/htseq/{sample}_tl.bam",
-	    "results/normalization/scale"
+	    "results/normalization/scale",
+        "resources/genome.fasta",
     output:
         temp("results/tracks/{sample}_success.txt"),
         expand("results/tracks/{{sample}}.{mut}.{id}.{strand}.tdf", mut=config["mut_tracks"], id=[0,1,2,3,4,5], strand = ['pos', 'min'])
@@ -94,7 +97,7 @@ rule maketdf:
     conda:
         "../envs/tracks.yaml"
     shell:
-        "workflow/scripts/tracks.sh {threads} {wildcards.sample} {input} {config[mut_tracks]} {config[genome_fasta]} {config[WSL]} {config[normalize]} {output}"
+        "workflow/scripts/tracks.sh {threads} {wildcards.sample} {input} {config[mut_tracks]} {config[WSL]} {config[normalize]} {output}"
 
 rule makecB:
     input:

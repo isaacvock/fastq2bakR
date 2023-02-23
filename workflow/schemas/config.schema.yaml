@@ -69,6 +69,27 @@ properties:
       - cutadapt-se
       - star
 
+  WSL:
+    type: integer
+  
+  fragment_size:
+    type: integer
+
+  mut_tracks:
+    type: string
+
+  minqual:
+    type: integer
+
+  keepcols:
+    type: string
+
+  spikename:
+    type: string
+
+  normalize:
+    type: boolean
+
 required:
   - samples
   - units
@@ -77,3 +98,10 @@ required:
   - diffexp
   - params
   - trimming
+  - WSL
+  - fragment_size
+  - mut_tracks
+  - minqual
+  - keepcols
+  - spikename
+  - normalize

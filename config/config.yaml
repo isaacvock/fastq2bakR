@@ -34,4 +34,28 @@ diffexp:
 params:
   cutadapt-pe: ""
   cutadapt-se: ""
-  star: "--outSAMtype BAM Unsorted"
+  star: ""
+
+### bam2bakR parameters ###
+
+# Are you using the Windows subsystem for linux? 0 = Yes, 1 = No
+WSL: 1
+
+# Number of reads per fragment when splitting up bam file
+fragment_size: 5000
+
+# Type of mutations of interest
+mut_tracks: "TC" # ("TC", "GA", "TC,GA")
+
+# Minimum base quality to call mutation
+minqual: 40
+
+# Which columns to keep in final cB.csv.gz file
+keepcols: "sample,sj,io,ei,ai,GF,XF,rname"
+
+# String common to spike-in gene_ids in annotation gtf
+  # If you have no spike-ins, then this should be "\"\"", i.e., a string containing ""
+spikename: "\"\""
+
+# If True, tracks will be normalized using either spike-ins (if present) or edgeR's normalization strategy
+normalize: True
