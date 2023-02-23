@@ -124,7 +124,7 @@ rule maketdf:
 
 rule makecB:
     input:
-        expand("results/counts/{sample}_counts.csv.gz", sample=config["samples"])
+        expand("results/counts/{sample}_counts.csv.gz", sample=SAMP_NAMES)
     params:
         mut_tracks = config["mut_tracks"],
         keepcols = config["keepcols"]

@@ -40,4 +40,4 @@ rule all:
         "results/qc/multiqc_report.html",
         "results/pca.svg",
         "results/cB/cB.csv.gz",
-        expand("results/tracks/{{sample}}.{mut}.{id}.{strand}.tdf", mut=config["mut_tracks"], id=[0,1,2,3,4,5], strand = ['pos', 'min'])
+        expand("results/tracks/{sample}.{mut}.{id}.{strand}.tdf", sample = SAMP_NAMES, mut=config["mut_tracks"], id=[0,1,2,3,4,5], strand = ['pos', 'min'])
