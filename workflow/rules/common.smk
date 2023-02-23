@@ -58,6 +58,7 @@ def get_final_output():
     final_output.append("results/count_matrix/all.tsv")
     final_output.append(expand(
         "results/rsem/{S}-{U}.genes.results",
+        zip,
         S=list(zip(*names))[0],
         U=list(zip(*names))[1],
     ))
