@@ -31,7 +31,7 @@ def get_final_output():
         contrast=config["diffexp"]["contrasts"],
     )
     final_output.append("results/deseq2/normcounts.tsv")
-    final_output.append("results/counts/all.tsv")
+    final_output.append("results/count_matrix/all.tsv")
     final_output.append(expand(
         "results/rsem/{S}-{U}.genes.results",
         S=list(zip(*names))[0],
