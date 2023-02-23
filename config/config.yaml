@@ -42,7 +42,7 @@ params:
 WSL: 1
 
 # Number of reads per fragment when splitting up bam file
-fragment_size: 5000
+fragment_size: 10000
 
 # Type of mutations of interest
 mut_tracks: "TC" # ("TC", "GA", "TC,GA")

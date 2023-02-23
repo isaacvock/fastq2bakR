@@ -1,4 +1,5 @@
-sample_name,unit_name,s4U,fq1,fq2,sra,adapters,strandedness
-A,lane1,no,A.1.fq.gz   no,A.2.fq.gz,NA,NA,NA
-A,lane2,no,A2.1.fq.gz  no,A2.2.fq.gz,NA,NA,NA
-B,lane1,yes,B.1.fq.gz   no,B.2.fq.gz,NA,NA,NA
+sample_name	unit_name	s4U	fq1	fq2	sra	adapters	strandedness
+WT_1	lane1	yes	test_WT1_1.fastq.gz	test_WT1_2.fastq.gz	NA	NA	reverse
+WT_2	lane2	yes	test_WT2_1.fastq.gz	test_WT2_2.fastq.gz	NA	NA	reverse
+KO_1	lane1	yes	test_KO1_1.fastq.gz	test_KO1_2.fastq.gz	NA	NA	reverse
+KO_ctl	lane2	no	test_KOctl_1.fastq.gz	test_KOctl_2.fastq.gz	NA	NA	reverse
