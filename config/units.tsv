@@ -1,4 +1,4 @@
-sample_name	unit_name   s4U	fq1	fq2	sra	adapters	strandedness
-A	lane1	A.1.fq.gz   no	A.2.fq.gz
-A	lane2	A2.1.fq.gz  no	A2.2.fq.gz		
-B	lane1	B.1.fq.gz   no	B.2.fq.gz	
+sample_name,unit_name,s4U,fq1,fq2,sra,adapters,strandedness
+A,lane1,no,A.1.fq.gz   no,A.2.fq.gz,NA,NA,NA
+A,lane2,no,A2.1.fq.gz  no,A2.2.fq.gz,NA,NA,NA
+B,lane1,yes,B.1.fq.gz   no,B.2.fq.gz,NA,NA,NA
