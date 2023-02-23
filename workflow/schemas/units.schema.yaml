@@ -23,6 +23,9 @@ properties:
   strandedness:
     type: string
     description: one of the values 'none', 'yes' or 'reverse' according to protocol strandedness
+  s4U:
+    type: string
+    description: one of the values 'yes' or 'no' according to whether or not sample was s4U labeled.
 
 required:
   - sample_name
