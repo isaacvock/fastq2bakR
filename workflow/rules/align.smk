@@ -31,7 +31,6 @@ rule quantify:
         # optional, specify if sequencing is paired-end
         paired_end=True,
         # additional optional parameters to pass to rsem, for example,
-        extra="--seed 42",
     log:
         "logs/rsem/calculate_expression/{sample}-{unit}.log",
     conda:
