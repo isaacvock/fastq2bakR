@@ -19,6 +19,8 @@ output_txt=$3
 output_dir=$4
 genome_fasta=$5
 
+echo $genome_fasta
+
 
 touch "$output_dir"
 
