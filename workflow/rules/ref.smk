@@ -55,7 +55,7 @@ rule chr_genome:
     shell:
         """
         #!/bin/bash
-        awk '$1 ~ /^>/ { split($1, h, ">"); print ">chr"h[2]} $1 !~ /^>/ { print $0}' {input} > {output}
+        awk '$1 ~ /^>/ {{ split($1, h, ">"); print ">chr"h[2]}} $1 !~ /^>/ {{ print $0}}' {input} > {output}
         """
 
 rule genome_faidx:
