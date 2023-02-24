@@ -36,7 +36,7 @@ rule chr_annotation:
     log:
         "logs/chr_annotation.log",
     conda:
-        ../envs/htseq.yaml
+        "../envs/htseq.yaml"
     shell:
         """"
         awk -v OFS="\t" -v FS="\t" ' $1 !~ /^#/ {$1 = "chr"$1}
@@ -51,7 +51,7 @@ rule chr_genome:
     log:
         "logs/chr_genome.log",
     conda:
-        ../envs/htseq.yaml
+        "../envs/htseq.yaml"
     shell:
         """"
         awk '$1 ~ /^>/ { split($1, h, ">")}
