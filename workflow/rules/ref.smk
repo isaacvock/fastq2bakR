@@ -112,6 +112,5 @@ rule RSEM_index:
         extra="--gtf resources/genome_chr.gtf",
     log:
         "logs/rsem/prepare-reference.log",
-    cache: True
     wrapper:
         "v1.23.4/bio/rsem/prepare-reference"
