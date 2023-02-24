@@ -38,10 +38,10 @@ rule chr_annotation:
     conda:
         "../envs/htseq.yaml"
     shell:
-        """"
+        """
         awk -v OFS="\t" -v FS="\t" ' $1 !~ /^#/ {$1 = "chr"$1}
                                     {print $0}' {input} > {output}
-        """"
+        """
 
 rule chr_genome:
     input:
@@ -53,11 +53,11 @@ rule chr_genome:
     conda:
         "../envs/htseq.yaml"
     shell:
-        """"
-        awk '$1 ~ /^>/ { split($1, h, ">")}
-                          print ">chr"h[2]}
-            $1 ~ /^>/ { print $0}' {input} > {output}
-        """"
+        """
+        awk '$1 ~ /^>/ {{ split($1, h, ">") }}
+            {{ print ">chr"h[2] }}
+            $1 !~ /^>/ {{ print $0 }}' {input} > {output}
+        """
 
 rule genome_faidx:
     input:
