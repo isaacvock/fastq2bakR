@@ -11,7 +11,7 @@ rule merge_bams:
     conda:
         "../envs/cnt_muts.yaml"
     shell:
-        "samtools merge -@ {threads} {output.merged_bam} {input.bamfiles} && samtools sort -n -@ {threads} {output.merged_bam} -o {output.sorted_bam}"
+        "samtools merge -@ {threads} {output.merged_bam} {input.bamfiles} && samtools sort -n -@ {threads} {output.merged_bam} -o {output.sorted_bam} 1> {log} 2>&1"
 
 
 rule sort_filter:
@@ -29,7 +29,7 @@ rule sort_filter:
     conda:
         "../envs/cnt_muts.yaml"
     shell:
-        "./workflow/scripts/sort_filter.sh {threads} {wildcards.sample} {input} {output} {params.format}"
+        "./workflow/scripts/sort_filter.sh {threads} {wildcards.sample} {input} {output} {params.format} 1> {log} 2>&1"
 
 rule htseq_cnt:
     input:
@@ -44,7 +44,7 @@ rule htseq_cnt:
     conda:
         "../envs/cnt_muts.yaml"
     shell:
-        "./workflow/scripts/htseq.sh {threads} {wildcards.sample} {input} {output}"
+        "./workflow/scripts/htseq.sh {threads} {wildcards.sample} {input} {output} 1> {log} 2>&1"
 
 rule normalize:
     input:
@@ -80,7 +80,7 @@ rule call_snps:
     conda:
         "../envs/cnt_muts.yaml"
     shell:
-        "./workflow/scripts/call_snps.sh {threads} {params.nsamps} {output} {input}"
+        "./workflow/scripts/call_snps.sh {threads} {params.nsamps} {output} {input} 1> {log} 2>&1"
 
 rule cnt_muts:
     input:
@@ -100,7 +100,7 @@ rule cnt_muts:
     conda:
         "../envs/cnt_muts.yaml"
     shell:
-        "./workflow/scripts/mut_call.sh {threads} {wildcards.sample} {input} {output} {params.fragment_size} {params.minqual} {params.mut_tracks} {params.format}"
+        "./workflow/scripts/mut_call.sh {threads} {wildcards.sample} {input} {output} {params.fragment_size} {params.minqual} {params.mut_tracks} {params.format} 1> {log} 2>&1"
 
 rule maketdf:
     input:
@@ -121,7 +121,7 @@ rule maketdf:
     conda:
         "../envs/tracks.yaml"
     shell:
-        "./workflow/scripts/tracks.sh {threads} {wildcards.sample} {input} {params.mut_tracks} {params.wsl} {params.normalize} {output}"
+        "./workflow/scripts/tracks.sh {threads} {wildcards.sample} {input} {params.mut_tracks} {params.wsl} {params.normalize} {output} 1> {log} 2>&1"
 
 rule makecB:
     input:
@@ -137,4 +137,4 @@ rule makecB:
     conda:
         "../envs/cnt_muts.yaml"
     shell:
-        "./workflow/scripts/master.sh {threads} {output} {params.keepcols} {params.mut_tracks}"
+        "./workflow/scripts/master.sh {threads} {output} {params.keepcols} {params.mut_tracks} 1> {log} 2>&1"
