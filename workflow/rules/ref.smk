@@ -38,7 +38,8 @@ rule chr_annotation:
         "../envs/htseq.yaml"
     shell:
         """
-        awk 'BEGIN{{ FS=OFS="\t" }} /^#/ {{ print }}; /^#/ {{ next }}; {{ gsub(/^/, "chr", $1); print }}' {input} > {output}
+        #!/bin/bash
+        awk -v OFS="\t" -v FS="\t" ' $1 !~ /^#/ {$1 = "chr"$1} {print $0}' {input} > {output}
         """
 
 rule chr_genome:
@@ -53,7 +54,8 @@ rule chr_genome:
         "../envs/htseq.yaml"
     shell:
         """
-        awk '/^>/ {{ gsub(/^>/, ">chr"); print; next }} {{ print }}' {input} > {output}
+        #!/bin/bash
+        awk '$1 ~ /^>/ { split($1, h, ">"); print ">chr"h[2]} $1 !~ /^>/ { print $0}' {input} > {output}
         """
 
 rule genome_faidx:
