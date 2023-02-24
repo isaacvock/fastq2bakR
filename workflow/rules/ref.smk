@@ -39,7 +39,7 @@ rule chr_annotation:
     shell:
         """
         #!/bin/bash
-        awk -v OFS="\t" -v FS="\t" ' $1 !~ /^#/ {$1 = "chr"$1} {print $0}' {input} > {output}
+        awk  'BEGIN{{ FS=OFS="\t" }} $1 !~ /^#/ {{$1 = "chr"$1}} {{print $0}}' {input} > {output}
         """
 
 rule chr_genome:
