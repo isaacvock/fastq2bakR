@@ -28,6 +28,36 @@ rule get_annotation:
     wrapper:
         "v1.21.4/bio/reference/ensembl-annotation"
 
+rule chr_annotation:
+    input:
+        "resources/genome.gtf",
+    output:
+        temp("resources/genome_chr.gtf"),
+    log:
+        "logs/chr_annotation.log",
+    conda:
+        ../envs/htseq.yaml
+    shell:
+        """"
+        awk -v OFS="\t" -v FS="\t" ' $1 !~ /^#/ {$1 = "chr"$1}
+                                    {print $0}' {input} > {output}
+        """"
+
+rule chr_genome:
+    input:
+        "resources/genome.fasta",
+    output:
+        temp("resources/genome_chr.fasta"),
+    log:
+        "logs/chr_genome.log",
+    conda:
+        ../envs/htseq.yaml
+    shell:
+        """"
+        awk '$1 ~ /^>/ { split($1, h, ">")}
+                          print ">chr"h[2]}
+            $1 ~ /^>/ { print $0}' {input} > {output}
+        """"
 
 rule genome_faidx:
     input:
