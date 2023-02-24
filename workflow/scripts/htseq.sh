@@ -8,6 +8,8 @@ annotation=$4
 output=$5
 output2=$6
 
+    echo $annotation
+
     # Will create the ./results/htseq
     touch "$output2"
 
