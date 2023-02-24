@@ -27,8 +27,8 @@ diffexp:
   # contrasts for the deseq2 results method
   contrasts:
     A-vs-B:
-      - A
-      - B
+      - untreated
+      - treated
   model: ~condition
 
 params:
