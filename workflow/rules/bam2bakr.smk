@@ -18,7 +18,7 @@ rule sort_filter:
     input:
         "results/merge_bams/{sample}.sorted.bam",
     params:
-        format = lambda wildcards: "SE" if get_format(wildcards) else "PE"
+        format = lambda wildcards: "PE" if get_format(wildcards) else "SE"
     output:
         "results/sf_reads/{sample}.s.sam",
         "results/sf_reads/{sample}_fixed_mate.bam",
