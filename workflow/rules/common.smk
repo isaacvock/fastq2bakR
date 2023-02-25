@@ -215,4 +215,4 @@ def unique(list1):
         if x not in unique_list:
             unique_list.append(x)
     # print list
-    return uniqe_list
+    return unique_list
