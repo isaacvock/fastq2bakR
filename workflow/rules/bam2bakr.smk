@@ -90,7 +90,8 @@ rule cnt_muts:
         format = lambda wildcards: "SE" if get_format(wildcards) else "PE",
         fragment_size = config["fragment_size"],
         minqual = config["minqual"],
-        mut_tracks = config["mut_tracks"]
+        mut_tracks = config["mut_tracks"],
+        strand = lambda wildcards: "F" if unique(get_strandedness(units)) == 'forward' else "R"
     output:
         "results/counts/{sample}_counts.csv.gz",
         temp("results/counts/{sample}_check.txt")
@@ -100,7 +101,7 @@ rule cnt_muts:
     conda:
         "../envs/cnt_muts.yaml"
     shell:
-        "./workflow/scripts/mut_call.sh {threads} {wildcards.sample} {input} {output} {params.fragment_size} {params.minqual} {params.mut_tracks} {params.format} 1> {log} 2>&1"
+        "./workflow/scripts/mut_call.sh {threads} {wildcards.sample} {input} {output} {params.fragment_size} {params.minqual} {params.mut_tracks} {params.format} {params.strand} 1> {log} 2>&1"
 
 rule maketdf:
     input:

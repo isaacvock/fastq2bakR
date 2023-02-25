@@ -203,3 +203,16 @@ def get_fastqs(wc):
 
 def get_contrast(wildcards):
     return config["diffexp"]["contrasts"][wildcards.contrast]
+
+def unique(list1):
+ 
+    # initialize a null list
+    unique_list = []
+ 
+    # traverse for all elements
+    for x in list1:
+        # check if exists in unique_list or not
+        if x not in unique_list:
+            unique_list.append(x)
+    # print list
+    return uniqe_list

@@ -11,6 +11,7 @@ fragment_size=$7
 minqual=$8
 mut_tracks=$9
 format=${10}
+strand=${11}
 
 # Create results/counts/
 touch "$output2"
@@ -73,6 +74,7 @@ touch "$output2"
                                               --mutType $mut_tracks \
                                               --minQual $minqual \
 											  --SNPs "./results/snps/snp.txt" \
+                                              --strandedness $strand \
                                               --reads $format" ::: ./results/counts/*_"$sample"_frag.bam \
 
 
