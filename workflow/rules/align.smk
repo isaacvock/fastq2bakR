@@ -11,7 +11,7 @@ rule align:
     params:
         idx=lambda wc, input: input.index,
         extra="--outSAMtype BAM SortedByCoordinate --outFilterMismatchNmax 23 --outSAMattributes NH HI AS NM MD --quantMode TranscriptomeSAM GeneCounts --sjdbGTFfile {} {}".format(
-            "resources/genome_chr.gtf", config["params"]["star"]
+            "resources/genome.gtf", config["params"]["star"]
         ),
     conda:
         "../envs/star.yaml"

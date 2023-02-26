@@ -1,6 +1,6 @@
 rule get_genome:
     output:
-        temp("resources/genome.fasta"),
+        "resources/genome.fasta",
     log:
         "logs/get-genome.log",
     params:
@@ -14,7 +14,7 @@ rule get_genome:
 
 rule get_annotation:
     output:
-        temp("resources/genome.gtf"),
+        "resources/genome.gtf",
     params:
         species=config["ref"]["species"],
         fmt="gtf",
@@ -26,43 +26,11 @@ rule get_annotation:
     wrapper:
         "v1.21.4/bio/reference/ensembl-annotation"
 
-rule chr_annotation:
-    input:
-        "resources/genome.gtf",
-    output:
-        "resources/genome_chr.gtf",
-    cache: True
-    log:
-        "logs/chr_annotation.log",
-    conda:
-        "../envs/htseq.yaml"
-    shell:
-        """
-        #!/bin/bash
-        awk  'BEGIN{{ FS=OFS="\t" }} $1 !~ /^#/ {{$1 = "chr"$1}} {{print $0}}' {input} > {output}
-        """
-
-rule chr_genome:
+rule genome_faidx:
     input:
         "resources/genome.fasta",
     output:
-        "resources/genome_chr.fasta",
-    cache: True
-    log:
-        "logs/chr_genome.log",
-    conda:
-        "../envs/htseq.yaml"
-    shell:
-        """
-        #!/bin/bash
-        awk '$1 ~ /^>/ {{ split($1, h, ">"); print ">chr"h[2]}} $1 !~ /^>/ {{ print $0}}' {input} > {output}
-        """
-
-rule genome_faidx:
-    input:
-        "resources/genome_chr.fasta",
-    output:
-        "resources/genome_chr.fasta.fai",
+        "resources/genome.fasta.fai",
     log:
         "logs/genome-faidx.log",
     cache: True
@@ -72,9 +40,9 @@ rule genome_faidx:
 
 rule bwa_index:
     input:
-        "resources/genome_chr.fasta",
+        "resources/genome.fasta",
     output:
-        multiext("resources/genome_chr.fasta", ".amb", ".ann", ".bwt", ".pac", ".sa"),
+        multiext("resources/genome.fasta", ".amb", ".ann", ".bwt", ".pac", ".sa"),
     log:
         "logs/bwa_index.log",
     resources:
@@ -86,13 +54,13 @@ rule bwa_index:
 
 rule star_index:
     input:
-        fasta="resources/genome_chr.fasta",
-        annotation="resources/genome_chr.gtf",
+        fasta="resources/genome.fasta",
+        annotation="resources/genome.gtf",
     output:
         directory("resources/star_genome"),
     threads: 4
     params:
-        extra="--sjdbGTFfile resources/genome_chr.gtf --sjdbOverhang 100",
+        extra="--sjdbGTFfile resources/genome.gtf --sjdbOverhang 100",
     log:
         "logs/star_index_genome.log",
     cache: True
@@ -102,7 +70,7 @@ rule star_index:
 
 rule RSEM_index:
     input:
-        reference_genome="resources/genome_chr.fasta",
+        reference_genome="resources/genome.fasta",
     output:
         seq="index/reference.seq",
         grp="index/reference.grp",
@@ -111,7 +79,7 @@ rule RSEM_index:
         idxfa="index/reference.idx.fa",
         n2g="index/reference.n2g.idx.fa",
     params:
-        extra="--gtf resources/genome_chr.gtf",
+        extra="--gtf resources/genome.gtf",
     log:
         "logs/rsem/prepare-reference.log",
     wrapper:

@@ -34,7 +34,7 @@ rule sort_filter:
 rule htseq_cnt:
     input:
         "results/sf_reads/{sample}.s.sam",
-        "resources/genome_chr.gtf",
+        "resources/genome.gtf",
     output:
         "results/htseq/{sample}_tl.bam",
         temp("results/htseq/{sample}_check.txt")
@@ -67,7 +67,7 @@ rule normalize:
 
 rule call_snps:
     input:
-        "resources/genome_chr.fasta",
+        "resources/genome.fasta",
         expand("results/htseq/{ctl}_tl.bam", ctl = CTL_NAMES)
     params:
         nsamps = nctl
@@ -108,7 +108,7 @@ rule maketdf:
         "results/counts/{sample}_counts.csv.gz",
         "results/htseq/{sample}_tl.bam",
 	    "results/normalization/scale",
-        "resources/genome_chr.fasta",
+        "resources/genome.fasta",
     params:
         mut_tracks = config["mut_tracks"],
         wsl = config["WSL"],
