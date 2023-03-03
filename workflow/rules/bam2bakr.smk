@@ -30,10 +30,10 @@ rule sort_filter:
     conda:
         "../envs/cnt_muts.yaml"
     shell:
-        """"
+        """
         chmod +x {params.shellscript}
         {params.shellscript} {threads} {wildcards.sample} {input} {output} {params.format} 1> {log} 2>&1
-        """"
+        """
 
 rule htseq_cnt:
     input:
@@ -51,11 +51,11 @@ rule htseq_cnt:
     conda:
         "../envs/cnt_muts.yaml"
     shell:
-        """"
+        """
         chmod +x {params.shellscript}
         chmod +x {params.pythonscript}
         {params.shellscript} {threads} {wildcards.sample} {input} {output} {params.pythonscript} 1> {log} 2>&1
-        """"
+        """
 
 rule normalize:
     input:
@@ -96,10 +96,10 @@ rule call_snps:
     conda:
         "../envs/cnt_muts.yaml"
     shell:
-        """"
+        """
         chmod +x {params.shellscript}
         {params.shellscript} {threads} {params.nsamps} {output} {input} 1> {log} 2>&1
-        """"
+        """
 
 rule cnt_muts:
     input:
@@ -122,12 +122,12 @@ rule cnt_muts:
     conda:
         "../envs/cnt_muts.yaml"
     shell:
-        """"
+        """
         chmod +x {params.shellscript}
         chmod +x {params.pythonscript}
         chmod +x {params.awkscript}
         {params.shellscript} {threads} {wildcards.sample} {input} {output} {params.minqual} {params.mut_tracks} {params.format} {params.strand} 1> {log} 2>&1"
-        """"
+        """
 
 rule maketdf:
     input:
@@ -150,11 +150,11 @@ rule maketdf:
     conda:
         "../envs/tracks.yaml"
     shell:
-        """"
+        """
         chmod +x {params.shellscript}
         chmod +x {params.shellscript}
         {params.shellscript} {threads} {wildcards.sample} {input} {params.mut_tracks} {params.wsl} {params.normalize} {params.pythonscript} {output} 1> {log} 2>&1
-        """"
+        """
 
 rule makecB:
     input:
@@ -171,7 +171,7 @@ rule makecB:
     conda:
         "../envs/cnt_muts.yaml"
     shell:
-        """"
+        """
         chmod +x {params.shellscript}
         {params.shellscript} {threads} {output} {params.keepcols} {params.mut_tracks} 1> {log} 2>&1
-        """"
+        """
