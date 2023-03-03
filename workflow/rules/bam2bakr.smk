@@ -109,7 +109,7 @@ rule cnt_muts:
         format = lambda wildcards: "SE" if get_format(wildcards) else "PE",
         minqual = config["minqual"],
         mut_tracks = config["mut_tracks"],
-        strand = lambda wildcards: "F" if unique(get_strandedness(units)) == 'forward' else "R"
+        strand = lambda wildcards: "F" if unique(get_strandedness(units)) == 'forward' else "R",
         shellscript = workflow.source_path("../scripts/mut_call.sh"),
         pythonscript = workflow.source_path("../scripts/mut_call.py"),
         awkscript = workflow.source_path("../scripts/fragment_sam.awk") 
