@@ -18,7 +18,8 @@ rule sort_filter:
     input:
         "results/merge_bams/{sample}.sorted.bam",
     params:
-        format = lambda wildcards: "PE" if get_format(wildcards) else "SE"
+        format = lambda wildcards: "PE" if get_format(wildcards) else "SE",
+        shellscript=workflow.source_path("../scripts/sort_filter.sh")
     output:
         "results/sf_reads/{sample}.s.sam",
         "results/sf_reads/{sample}_fixed_mate.bam",
@@ -29,7 +30,10 @@ rule sort_filter:
     conda:
         "../envs/cnt_muts.yaml"
     shell:
-        "./workflow/scripts/sort_filter.sh {threads} {wildcards.sample} {input} {output} {params.format} 1> {log} 2>&1"
+        """"
+        chmod +x {params.shellscript}
+        {params.shellscript} {threads} {wildcards.sample} {input} {output} {params.format} 1> {log} 2>&1
+        """"
 
 rule htseq_cnt:
     input:
@@ -38,13 +42,20 @@ rule htseq_cnt:
     output:
         "results/htseq/{sample}_tl.bam",
         temp("results/htseq/{sample}_check.txt")
+    params: 
+        shellscript=workflow.source_path("../scripts/htseq.sh"),
+        pythonscript=workflow.source_path("../scripts/count_triple.py")
     log:
         "logs/htseq_cnt/{sample}.log"
     threads: workflow.cores
     conda:
         "../envs/cnt_muts.yaml"
     shell:
-        "./workflow/scripts/htseq.sh {threads} {wildcards.sample} {input} {output} 1> {log} 2>&1"
+        """"
+        chmod +x {params.shellscript}
+        chmod +x {params.pythonscript}
+        {params.shellscript} {threads} {wildcards.sample} {input} {output} {params.pythonscript} 1> {log} 2>&1
+        """"
 
 rule normalize:
     input:
@@ -52,7 +63,8 @@ rule normalize:
     output:
         "results/normalization/scale"
     params:
-        spikename = config["spikename"]
+        spikename = config["spikename"],
+        rscript=workflow.source_path("../scripts/normalize.R")
     log:
         "logs/normalize/normalize.log"
     threads: 1
@@ -60,8 +72,9 @@ rule normalize:
         "../envs/normalize.yaml"
     shell:
         r"""
-       	./workflow/scripts/normalize.R --dirs ./results/htseq/ --spikename {params.spikename}
-	mv scale {output}
+        chmod +x {params.rscript}
+       	{params.rscript} --dirs ./results/htseq/ --spikename {params.spikename}
+	    mv scale {output}
         """
 
 
@@ -70,17 +83,23 @@ rule call_snps:
         "resources/genome.fasta",
         expand("results/htseq/{ctl}_tl.bam", ctl = CTL_NAMES)
     params:
-        nsamps = nctl
+        nsamps = nctl,
+        shellscript = workflow.source_path("../scripts/call_snps.sh")
     output:
         "results/snps/snp.txt",
-        temp("results/snps/mkdir.txt")
+        "results/snps/snp.vcf",
+        temp("results/snps/mkdir.txt"),
+
     log:
         "logs/call_snps/ctl_samps.log"
     threads: workflow.cores
     conda:
         "../envs/cnt_muts.yaml"
     shell:
-        "./workflow/scripts/call_snps.sh {threads} {params.nsamps} {output} {input} 1> {log} 2>&1"
+        """"
+        chmod +x {params.shellscript}
+        {params.shellscript} {threads} {params.nsamps} {output} {input} 1> {log} 2>&1
+        """"
 
 rule cnt_muts:
     input:
@@ -88,10 +107,12 @@ rule cnt_muts:
         "results/snps/snp.txt"
     params:
         format = lambda wildcards: "SE" if get_format(wildcards) else "PE",
-        fragment_size = config["fragment_size"],
         minqual = config["minqual"],
         mut_tracks = config["mut_tracks"],
         strand = lambda wildcards: "F" if unique(get_strandedness(units)) == 'forward' else "R"
+        shellscript = workflow.source_path("../scripts/mut_call.sh"),
+        pythonscript = workflow.source_path("../scripts/mut_call.py"),
+        awkscript = workflow.source_path("../scripts/fragment_sam.awk") 
     output:
         "results/counts/{sample}_counts.csv.gz",
         temp("results/counts/{sample}_check.txt")
@@ -101,7 +122,12 @@ rule cnt_muts:
     conda:
         "../envs/cnt_muts.yaml"
     shell:
-        "./workflow/scripts/mut_call.sh {threads} {wildcards.sample} {input} {output} {params.fragment_size} {params.minqual} {params.mut_tracks} {params.format} {params.strand} 1> {log} 2>&1"
+        """"
+        chmod +x {params.shellscript}
+        chmod +x {params.pythonscript}
+        chmod +x {params.awkscript}
+        {params.shellscript} {threads} {wildcards.sample} {input} {output} {params.minqual} {params.mut_tracks} {params.format} {params.strand} 1> {log} 2>&1"
+        """"
 
 rule maketdf:
     input:
@@ -112,7 +138,9 @@ rule maketdf:
     params:
         mut_tracks = config["mut_tracks"],
         wsl = config["WSL"],
-        normalize = config["normalize"]
+        normalize = config["normalize"],
+        shellscript = workflow.source_path("../scripts/tracks.sh"),
+        pythonscript = workflow.source_path("../scripts/count_to_tracks.py")
     output:
         temp("results/tracks/{sample}_success.txt"),
         expand("results/tracks/{{sample}}.{mut}.{id}.{strand}.tdf", mut=config["mut_tracks"], id=[0,1,2,3,4,5], strand = ['pos', 'min'])
@@ -122,14 +150,19 @@ rule maketdf:
     conda:
         "../envs/tracks.yaml"
     shell:
-        "./workflow/scripts/tracks.sh {threads} {wildcards.sample} {input} {params.mut_tracks} {params.wsl} {params.normalize} {output} 1> {log} 2>&1"
+        """"
+        chmod +x {params.shellscript}
+        chmod +x {params.shellscript}
+        {params.shellscript} {threads} {wildcards.sample} {input} {params.mut_tracks} {params.wsl} {params.normalize} {params.pythonscript} {output} 1> {log} 2>&1
+        """"
 
 rule makecB:
     input:
         expand("results/counts/{sample}_counts.csv.gz", sample=SAMP_NAMES)
     params:
         mut_tracks = config["mut_tracks"],
-        keepcols = config["keepcols"]
+        keepcols = config["keepcols"],
+        shellscript = workflow.source_path("../scripts/master.sh")
     output:
         "results/cB/cB.csv.gz"
     log:
@@ -138,4 +171,7 @@ rule makecB:
     conda:
         "../envs/cnt_muts.yaml"
     shell:
-        "./workflow/scripts/master.sh {threads} {output} {params.keepcols} {params.mut_tracks} 1> {log} 2>&1"
+        """"
+        chmod +x {params.shellscript}
+        {params.shellscript} {threads} {output} {params.keepcols} {params.mut_tracks} 1> {log} 2>&1
+        """"

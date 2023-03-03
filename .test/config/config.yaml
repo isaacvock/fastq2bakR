@@ -42,12 +42,6 @@ params:
 
 ### bam2bakR parameters ###
 
-# Are you using the Windows subsystem for linux? 0 = Yes, 1 = No
-WSL: 1
-
-# Number of reads per fragment when splitting up bam file
-fragment_size: 5000
-
 # Type of mutations of interest
 mut_tracks: "TC" # ("TC", "GA", "TC,GA")
 
@@ -63,3 +57,6 @@ spikename: "\"\""
 
 # If True, tracks will be normalized using either spike-ins (if present) or edgeR's normalization strategy
 normalize: True
+
+# Are you using the Windows subsystem for linux? 0 = Yes, 1 = No
+WSL: 1

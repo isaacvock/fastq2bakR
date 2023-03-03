@@ -68,13 +68,7 @@ properties:
       - cutadapt-pe
       - cutadapt-se
       - star
-
-  WSL:
-    type: integer
   
-  fragment_size:
-    type: integer
-
   mut_tracks:
     type: string
 
@@ -90,6 +84,9 @@ properties:
   normalize:
     type: boolean
 
+  WSL:
+    type: integer
+
 required:
   - samples
   - units
@@ -99,7 +96,6 @@ required:
   - params
   - trimming
   - WSL
-  - fragment_size
   - mut_tracks
   - minqual
   - keepcols

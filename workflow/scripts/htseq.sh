@@ -7,6 +7,7 @@ input=$3
 annotation=$4
 output=$5
 output2=$6
+cntscript=$7
 
     echo $annotations
 
@@ -22,7 +23,7 @@ output2=$6
             --joblog "$sample"_htseq_parallel.log \
             --roundrobin \
             --header '(@.*\n)*' \
-            --pipe python ./workflow/scripts/count_triple.py \
+            --pipe python $cntscript \
                         -f sam \
                         --samout ./results/htseq/"$sample"_htseq.{#}_temp.sam \
                         -t transcript,exon,exon \

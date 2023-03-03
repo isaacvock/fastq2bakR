@@ -7,14 +7,21 @@ input=$3
 input_snp=$4
 output=$5
 output2=$6
-fragment_size=$7
-minqual=$8
-mut_tracks=$9
-format=${10}
-strand=${11}
+minqual=$7
+mut_tracks=$8
+format=$9
+strand=${10}
+mutcnt=${11}
+awkscript=${12}
 
 # Create results/counts/
 touch "$output2"
+
+# Infer a decent fragment size
+num_reads=$(samtools view -@ "$cpus" -c "$input")
+fragment_size=$(echo "scale=0; $num_reads/$cpus" | bc)
+(( fragment_size++ ))
+
 
 # Spread the work load so all cpus are working at all times
     declare $(samtools view -@ "$cpus"  "$input" \
@@ -50,7 +57,7 @@ touch "$output2"
     	| awk \
     		-v fragment_size="$newFragmentSize" \
     		-v sample="$sample" \
-    		-f "./workflow/scripts/fragment_sam.awk" &&
+    		-f "$awkscript" &&
 
     for f in $(seq 1 $newFragmentNumber); do
         samtools view -@ "$cpus" -o ./results/counts/"$f"_"$sample"_frag.bam ./results/counts/"$f"_"$sample".sam
@@ -70,7 +77,7 @@ touch "$output2"
 ## Need to add mutation call script to scripts!
 
 # Call mutations
-    parallel -j $cpus "python ./workflow/scripts/mut_call.py -b {1} \
+    parallel -j $cpus "python $mutcnt -b {1} \
                                               --mutType $mut_tracks \
                                               --minQual $minqual \
 											  --SNPs "./results/snps/snp.txt" \
