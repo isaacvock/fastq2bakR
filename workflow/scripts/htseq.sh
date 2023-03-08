@@ -30,6 +30,7 @@ cntscript=$8
                         -t transcript,exon,exon \
                         -i gene_id,gene_id,gene_id \
                         -m union,union,intersection-strict \
+                        -s "$strand" \
                         -c ./results/htseq/"$sample"_GF_htseq.{#}_temp.txt,./results/htseq/"$sample"_EF_htseq.{#}_temp.txt,./results/htseq/"$sample"_XF_htseq.{#}_temp.txt \
                         - \
                         "$annotation"
