@@ -141,7 +141,7 @@ rule maketdf:
         wsl = config["WSL"],
         normalize = config["normalize"],
         shellscript = workflow.source_path("../scripts/tracks.sh"),
-        pythonscript = workflow.source_path("../scripts/count_to_tracks.py")
+        pythonscript = workflow.source_path("../scripts/count_to_tracks.py"),
         strandedness = lambda wildcards: "F" if unique(get_strandedness(units)) == 'forward' else "R",
     output:
         temp("results/tracks/{sample}_success.txt"),
