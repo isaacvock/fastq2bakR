@@ -186,18 +186,18 @@ output=${12}
     else
 
         # Make tdf files from the tracks
-        parallel -j "$cpus" 'if [[ "{3}" == "pos" ]]; then \ 
+        parallel -j "$cpus" 'if [[ "{3}" == "pos" ]]; then \
                                 igvtools toTDF \
                                     -f mean,max \
                                     ./results/tracks/'"$sample"'.{1}.{2}.{3}.bedGraph \
                                     ./results/tracks/'"$sample"'.{1}.{2}.min.tdf \
-                                    "$chrom_sizes"; \ 
+                                    '"$chrom_sizes"'; \
                             else \
                                 igvtools toTDF \
                                     -f mean,max \
                                     ./results/tracks/'"$sample"'.{1}.{2}.{3}.bedGraph \
                                     ./results/tracks/'"$sample"'.{1}.{2}.pos.tdf \
-                                    "$chrom_sizes"; \
+                                    '"$chrom_sizes"'; \
                             fi' \
                             ::: $muts \
                             ::: $(seq 0 5) \
