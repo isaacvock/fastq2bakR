@@ -189,14 +189,14 @@ output=${12}
         parallel -j "$cpus" 'if [[ "{3}" == "pos" ]]; then \ 
                                 igvtools toTDF \
                                     -f mean,max \
-                                    ./results/tracks/"$sample".{1}.{2}.{3}.bedGraph \
-                                    ./results/tracks/"$sample".{1}.{2}.min.tdf \
+                                    ./results/tracks/'"$sample"'.{1}.{2}.{3}.bedGraph \
+                                    ./results/tracks/'"$sample"'.{1}.{2}.min.tdf \
                                     "$chrom_sizes"; \ 
                             else \
                                 igvtools toTDF \
                                     -f mean,max \
-                                    ./results/tracks/"$sample".{1}.{2}.{3}.bedGraph \
-                                    ./results/tracks/"$sample".{1}.{2}.pos.tdf \
+                                    ./results/tracks/'"$sample"'.{1}.{2}.{3}.bedGraph \
+                                    ./results/tracks/'"$sample"'.{1}.{2}.pos.tdf \
                                     "$chrom_sizes"; \
                             fi' \
                             ::: $muts \
