@@ -142,7 +142,7 @@ rule maketdf:
         normalize = config["normalize"],
         shellscript = workflow.source_path("../scripts/tracks.sh"),
         pythonscript = workflow.source_path("../scripts/count_to_tracks.py"),
-        strandedness = lambda wildcards: "F" if unique(get_strandedness(units)) == 'forward' else "R",
+        strandedness = lambda wildcards: "F" if unique(get_strandedness(units)) == 'forward' else "R"
     output:
         temp("results/tracks/{sample}_success.txt"),
         expand("results/tracks/{{sample}}.{mut}.{id}.{strand}.tdf", mut=config["mut_tracks"], id=[0,1,2,3,4,5], strand = ['pos', 'min'])
@@ -154,7 +154,7 @@ rule maketdf:
     shell:
         """
         chmod +x {params.shellscript}
-        chmod +x {params.shellscript}
+        chmod +x {params.pythonscript}
         {params.shellscript} {threads} {wildcards.sample} {input} {params.mut_tracks} {params.wsl} {params.normalize} {params.pythonscript} {params.strandedness} {output} 1> {log} 2>&1
         """
 
