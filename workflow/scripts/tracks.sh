@@ -23,7 +23,8 @@ mut_tracks=$7
 WSL_b=$8
 normalize=$9
 script=${10}
-output=${11}
+strandedness=${11}
+output=${12}
 
 
     # Create ./results/tracks/
@@ -131,6 +132,7 @@ output=${11}
         rm ./results/tracks/"$sample"*.bg
 
     else
+        
         # Make tracks
         parallel -j "$cpus" STAR \
                                 --runMode inputAlignmentsFromBAM \
@@ -169,16 +171,40 @@ output=${11}
     #                                                                                  :::+ pos min
     #
 
+    if [ "$strandedness" == "F" ]; then
+
+        # Make tdf files from the tracks
+        parallel -j "$cpus" igvtools toTDF \
+                                    -f mean,max \
+                                    ./results/tracks/"$sample".{1}.{2}.{3}.bedGraph \
+                                    ./results/tracks/"$sample".{1}.{2}.{3}.tdf \
+                                    "$chrom_sizes" ::: $muts \
+                                                ::: $(seq 0 5) \
+                                                ::: pos min
 
 
-    # Make tdf files from the tracks
-    parallel -j "$cpus" igvtools toTDF \
-                                -f mean,max \
-                                ./results/tracks/"$sample".{1}.{2}.{3}.bedGraph \
-                                ./results/tracks/"$sample".{1}.{2}.{3}.tdf \
-                                "$chrom_sizes" ::: $muts \
-                                             ::: $(seq 0 5) \
-                                             ::: pos min
+    else
+
+        # Make tdf files from the tracks
+        parallel -j "$cpus" 'if [[ "{3}" == "pos" ]]; then \ 
+                                igvtools toTDF \
+                                    -f mean,max \
+                                    ./results/tracks/"$sample".{1}.{2}.{3}.bedGraph \
+                                    ./results/tracks/"$sample".{1}.{2}.min.tdf \
+                                    "$chrom_sizes"; \ 
+                            else \
+                                igvtools toTDF \
+                                    -f mean,max \
+                                    ./results/tracks/"$sample".{1}.{2}.{3}.bedGraph \
+                                    ./results/tracks/"$sample".{1}.{2}.pos.tdf \
+                                    "$chrom_sizes"; \
+                            fi' \
+                            ::: $muts \
+                            ::: $(seq 0 5) \
+                            ::: pos min
+
+    fi
+
 
     rm -f igv.log
 
