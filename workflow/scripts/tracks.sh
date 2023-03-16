@@ -143,15 +143,31 @@ output=${12}
                                 --outFileNamePrefix ./results/tracks/"$sample"_{1}_{2}_ ::: $muts \
                                                                          ::: $(seq 0 5)
 
-        # Take only unique component of track
-        parallel -j "$cpus" "awk -v norm=${normVal} \
-                                        '{print \$1, \$2, \$3, {3}1*norm*\$4}' \
-                                        ./results/tracks/${sample}_{1}_{2}_Signal.Unique.{4}.out.bg \
-                                        >> ./results/tracks/${sample}.{1}.{2}.{5}.bedGraph" ::: $muts \
-                                                                           ::: $(seq 0 5) \
-                                                                           ::: + - \
-                                                                           :::+ str1 str2 \
-                                                                           :::+ pos min
+        if [ "$strandedness" == "F" ]; then
+
+            # Take only unique component of track
+            parallel -j "$cpus" "awk -v norm=${normVal} \
+                                            '{print \$1, \$2, \$3, {3}1*norm*\$4}' \
+                                            ./results/tracks/${sample}_{1}_{2}_Signal.Unique.{4}.out.bg \
+                                            >> ./results/tracks/${sample}.{1}.{2}.{5}.bedGraph" ::: $muts \
+                                                                            ::: $(seq 0 5) \
+                                                                            ::: + - \
+                                                                            :::+ str1 str2 \
+                                                                            :::+ pos min
+        
+        else
+
+            # Take only unique component of track
+            parallel -j "$cpus" "awk -v norm=${normVal} \
+                                            '{print \$1, \$2, \$3, {3}1*norm*\$4}' \
+                                            ./results/tracks/${sample}_{1}_{2}_Signal.Unique.{4}.out.bg \
+                                            >> ./results/tracks/${sample}.{1}.{2}.{5}.bedGraph" ::: $muts \
+                                                                            ::: $(seq 0 5) \
+                                                                            ::: - + \
+                                                                            :::+ str1 str2 \
+                                                                            :::+ pos min
+
+        fi
 
         rm ./results/tracks/"$sample"*.bg
 
@@ -170,40 +186,16 @@ output=${12}
     #                                                                                  ::: + - \
     #                                                                                  :::+ pos min
     #
-
-    if [ "$strandedness" == "F" ]; then
-
-        # Make tdf files from the tracks
-        parallel -j "$cpus" igvtools toTDF \
-                                    -f mean,max \
-                                    ./results/tracks/"$sample".{1}.{2}.{3}.bedGraph \
-                                    ./results/tracks/"$sample".{1}.{2}.{3}.tdf \
-                                    "$chrom_sizes" ::: $muts \
-                                                ::: $(seq 0 5) \
-                                                ::: pos min
+    # Make tdf files from the tracks
+    parallel -j "$cpus" igvtools toTDF \
+                                -f mean,max \
+                                ./results/tracks/"$sample".{1}.{2}.{3}.bedGraph \
+                                ./results/tracks/"$sample".{1}.{2}.{3}.tdf \
+                                "$chrom_sizes" ::: $muts \
+                                            ::: $(seq 0 5) \
+                                            ::: pos min
 
 
-    else
-
-        # Make tdf files from the tracks
-        parallel -j "$cpus" 'if [[ "{3}" == "pos" ]]; then \
-                                igvtools toTDF \
-                                    -f mean,max \
-                                    ./results/tracks/'"$sample"'.{1}.{2}.{3}.bedGraph \
-                                    ./results/tracks/'"$sample"'.{1}.{2}.min.tdf \
-                                    '"$chrom_sizes"'; \
-                            else \
-                                igvtools toTDF \
-                                    -f mean,max \
-                                    ./results/tracks/'"$sample"'.{1}.{2}.{3}.bedGraph \
-                                    ./results/tracks/'"$sample"'.{1}.{2}.pos.tdf \
-                                    '"$chrom_sizes"'; \
-                            fi' \
-                            ::: $muts \
-                            ::: $(seq 0 5) \
-                            ::: pos min
-
-    fi
 
 
     rm -f igv.log
