@@ -1,5 +1,5 @@
 sample_name	unit_name	s4U	fq1	fq2	sra	adapters	strandedness
-A1	1	no	ngs-test-data/reads/a.scerevisiae.1.fq	ngs-test-data/reads/a.scerevisiae.2.fq	NA	NA	forward
-B1	1	no	ngs-test-data/reads/c.scerevisiae.1.fq	ngs-test-data/reads/c.scerevisiae.2.fq	NA	NA	forward
-A2	1	no	ngs-test-data/reads/c.scerevisiae.1.fq	ngs-test-data/reads/c.scerevisiae.2.fq	NA	NA	forward
-B2	1	no	ngs-test-data/reads/b.scerevisiae.1.fq	ngs-test-data/reads/b.scerevisiae.2.fq	NA	NA	forward
+A1	1	no	ngs-test-data/reads/a.scerevisiae.1.fq	ngs-test-data/reads/a.scerevisiae.2.fq	NA	NA	yes
+B1	1	no	ngs-test-data/reads/c.scerevisiae.1.fq	ngs-test-data/reads/c.scerevisiae.2.fq	NA	NA	yes
+A2	1	no	ngs-test-data/reads/c.scerevisiae.1.fq	ngs-test-data/reads/c.scerevisiae.2.fq	NA	NA	yes
+B2	1	no	ngs-test-data/reads/b.scerevisiae.1.fq	ngs-test-data/reads/b.scerevisiae.2.fq	NA	NA	yes
