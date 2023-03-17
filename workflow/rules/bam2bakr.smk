@@ -4,19 +4,18 @@ rule merge_bams:
         bamfiles=filter_bamfiles
     output:
         merged_bam="results/merge_bams/{sample}.merged.bam",
-        sorted_bam="results/merge_bams/{sample}.sorted.bam"
     log:
         "logs/merge_bams/{sample}.log"
     threads: workflow.cores
     conda:
         "../envs/cnt_muts.yaml"
     shell:
-        "samtools merge -@ {threads} {output.merged_bam} {input.bamfiles} && samtools sort -n -@ {threads} {output.merged_bam} -o {output.sorted_bam} 1> {log} 2>&1"
+        "samtools merge -@ {threads} -o {output.merged_bam} {input.bamfiles} 1> {log} 2>&1"
 
 
 rule sort_filter:
     input:
-        "results/merge_bams/{sample}.sorted.bam",
+        "results/merge_bams/{sample}.merged.bam",
     params:
         format = lambda wildcards: "PE" if get_format(wildcards) else "SE",
         shellscript=workflow.source_path("../scripts/sort_filter.sh")
