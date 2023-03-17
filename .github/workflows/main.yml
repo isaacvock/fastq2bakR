@@ -18,3 +18,25 @@ jobs:
         directory: .test
         snakefile: workflow/Snakefile
         args: "--lint"
+        
+  run-workflow:
+    runs-on: ubuntu-latest
+    needs:
+      - linting
+    steps:
+    - name: Checkout repository with submodules
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Test workflow
+      uses: snakemake/snakemake-github-action@v1.22.0
+      with:
+        directory: .test
+        snakefile: workflow/Snakefile
+        args: "--use-conda --show-failed-logs --cores 2 --conda-cleanup-pkgs cache"
+    - name: Test report
+      uses: snakemake/snakemake-github-action@v1.22.0
+      with:
+        directory: .test
+        snakefile: workflow/Snakefile
+        args: "--report report.zip"
