@@ -49,7 +49,7 @@ rule htseq_cnt:
         "logs/htseq_cnt/{sample}.log"
     threads: workflow.cores
     conda:
-        "../envs/cnt_muts.yaml"
+        "../envs/htseq.yaml"
     shell:
         """
         chmod +x {params.shellscript}
