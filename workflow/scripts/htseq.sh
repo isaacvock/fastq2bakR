@@ -15,6 +15,8 @@ cntscript=$8
     # Will create the ./results/htseq
     touch "$output2"
 
+    echo "$strand"
+
 
     samtools view -h -@ "$cpus" "$input" \
         | parallel \
