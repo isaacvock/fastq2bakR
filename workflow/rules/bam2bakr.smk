@@ -27,7 +27,7 @@ rule sort_filter:
         "logs/sort_filter/{sample}.log"
     threads: workflow.cores
     conda:
-        "../envs/cnt_muts.yaml"
+        "../envs/sort.yaml"
     shell:
         """
         chmod +x {params.shellscript}
@@ -94,7 +94,7 @@ rule call_snps:
         "logs/call_snps/ctl_samps.log"
     threads: workflow.cores
     conda:
-        "../envs/cnt_muts.yaml"
+        "../envs/snps.yaml"
     shell:
         """
         chmod +x {params.shellscript}
@@ -170,7 +170,7 @@ rule makecB:
         "logs/makecB/master.log"
     threads: workflow.cores
     conda:
-        "../envs/cnt_muts.yaml"
+        "../envs/cB.yaml"
     shell:
         """
         chmod +x {params.shellscript}
