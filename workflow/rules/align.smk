@@ -38,3 +38,16 @@ rule quantify:
     threads: 2
     script:
         "../scripts/rsem-calc.py"
+
+rule merge_bams:
+    input:
+        bamfiles=filter_bamfiles
+    output:
+        merged_bam="results/merge_bams/{sample}.merged.bam",
+    log:
+        "logs/merge_bams/{sample}.log"
+    threads: workflow.cores
+    conda:
+        "../envs/cnt_muts.yaml"
+    shell:
+        "samtools merge -@ {threads} {output.merged_bam} {input.bamfiles} 1> {log} 2>&1"
