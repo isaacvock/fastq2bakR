@@ -4,18 +4,24 @@
 cpus=$1
 sample=$2
 input=$3
-annotation=$4
-output=$5
-output2=$6
+output=$4
+output2=$5
+annotation=$6
 strand=$7
-cntscript=$8
+count_script=$8
 
-    echo $annotations
+if [ "$strand" = "F" ]; then
+
+    strand="yes"
+
+else
+
+    strand="reverse"
+
+fi
 
     # Will create the ./results/htseq
     touch "$output2"
-
-    echo "$strand"
 
 
     samtools view -h -@ "$cpus" "$input" \
@@ -26,7 +32,7 @@ cntscript=$8
             --joblog "$sample"_htseq_parallel.log \
             --roundrobin \
             --header '(@.*\n)*' \
-            --pipe python $cntscript \
+            --pipe python $count_script \
                         -f sam \
                         --samout ./results/htseq/"$sample"_htseq.{#}_temp.sam \
                         -t transcript,exon,exon \

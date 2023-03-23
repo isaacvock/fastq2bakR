@@ -18,13 +18,12 @@ sample=$2
 input1=$3
 input2=$4
 input3=$5
-genome_fasta=$6
-mut_tracks=$7
+mut_tracks=$6
+genome_fasta=$7
 WSL_b=$8
 normalize=$9
-script=${10}
-strandedness=${11}
-output=${12}
+pyscript=${10}
+output=${11}
 
 
     # Create ./results/tracks/
@@ -43,7 +42,7 @@ output=${12}
 
     echo '* Creating files for each level of counting.'
 
-    python $script \
+    python $pyscript \
         -i $input1 \
         -s ./results/tracks/$sample
 
@@ -132,7 +131,6 @@ output=${12}
         rm ./results/tracks/"$sample"*.bg
 
     else
-        
         # Make tracks
         parallel -j "$cpus" STAR \
                                 --runMode inputAlignmentsFromBAM \
@@ -143,31 +141,15 @@ output=${12}
                                 --outFileNamePrefix ./results/tracks/"$sample"_{1}_{2}_ ::: $muts \
                                                                          ::: $(seq 0 5)
 
-        if [ "$strandedness" == "F" ]; then
-
-            # Take only unique component of track
-            parallel -j "$cpus" "awk -v norm=${normVal} \
-                                            '{print \$1, \$2, \$3, {3}1*norm*\$4}' \
-                                            ./results/tracks/${sample}_{1}_{2}_Signal.Unique.{4}.out.bg \
-                                            >> ./results/tracks/${sample}.{1}.{2}.{5}.bedGraph" ::: $muts \
-                                                                            ::: $(seq 0 5) \
-                                                                            ::: + - \
-                                                                            :::+ str1 str2 \
-                                                                            :::+ pos min
-        
-        else
-
-            # Take only unique component of track
-            parallel -j "$cpus" "awk -v norm=${normVal} \
-                                            '{print \$1, \$2, \$3, {3}1*norm*\$4}' \
-                                            ./results/tracks/${sample}_{1}_{2}_Signal.Unique.{4}.out.bg \
-                                            >> ./results/tracks/${sample}.{1}.{2}.{5}.bedGraph" ::: $muts \
-                                                                            ::: $(seq 0 5) \
-                                                                            ::: - + \
-                                                                            :::+ str1 str2 \
-                                                                            :::+ pos min
-
-        fi
+        # Take only unique component of track
+        parallel -j "$cpus" "awk -v norm=${normVal} \
+                                        '{print \$1, \$2, \$3, {3}1*norm*\$4}' \
+                                        ./results/tracks/${sample}_{1}_{2}_Signal.Unique.{4}.out.bg \
+                                        >> ./results/tracks/${sample}.{1}.{2}.{5}.bedGraph" ::: $muts \
+                                                                           ::: $(seq 0 5) \
+                                                                           ::: + - \
+                                                                           :::+ str1 str2 \
+                                                                           :::+ pos min
 
         rm ./results/tracks/"$sample"*.bg
 
@@ -186,17 +168,17 @@ output=${12}
     #                                                                                  ::: + - \
     #                                                                                  :::+ pos min
     #
+
+
+
     # Make tdf files from the tracks
     parallel -j "$cpus" igvtools toTDF \
                                 -f mean,max \
                                 ./results/tracks/"$sample".{1}.{2}.{3}.bedGraph \
                                 ./results/tracks/"$sample".{1}.{2}.{3}.tdf \
                                 "$chrom_sizes" ::: $muts \
-                                            ::: $(seq 0 5) \
-                                            ::: pos min
-
-
-
+                                             ::: $(seq 0 5) \
+                                             ::: pos min
 
     rm -f igv.log
 
