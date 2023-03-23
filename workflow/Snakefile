@@ -45,12 +45,19 @@ module bam2bakr:
 #### Modify bam2bakR rules to use fastq2bakR config and functions
 use rule sort_filter from bam2bakr as bam2bakr_sort_filter with:
     input:
-        "results/merge_bams/{sample}.merged.bam"
+        "results/merge_bams/{sample}.merged.bam",
     params:
         format = lambda wildcards: "PE" if get_format(wildcards) else "SE",
         shellscript=workflow.source_path("scripts/sort_filter.sh")
+    output:
+        "results/sf_reads/{sample}.s.sam",
+        "results/sf_reads/{sample}_fixed_mate.bam",
+        "results/sf_reads/{sample}.f.sam",
 
 use rule htseq_cnt from bam2bakr as bam2bakr_htseq_cnt with:
+    input:
+        "results/sf_reads/{sample}.s.sam",
+        "resources/genome.gtf",
     params:
         shellscript=workflow.source_path("scripts/htseq.sh"),
         pythonscript=workflow.source_path("scripts/count_triple.py"),
@@ -59,6 +66,11 @@ use rule htseq_cnt from bam2bakr as bam2bakr_htseq_cnt with:
 use rule normalize from bam2bakr as bam2bakr_normalize with:
     input:
         expand("results/htseq/{sample}_tl.bam", sample = SAMP_NAMES)
+    output:
+        "results/normalization/scale"
+    params:
+        spikename = config["spikename"],
+        rscript=workflow.source_path("scripts/normalize.R")
 
 use rule call_snps from bam2bakr as bam2bakr_call_snps with:
     input:
@@ -67,23 +79,53 @@ use rule call_snps from bam2bakr as bam2bakr_call_snps with:
     params:
         nsamps = nctl,
         shellscript = workflow.source_path("scripts/call_snps.sh")
+    output:
+        "results/snps/snp.txt",
+        "results/snps/snp.vcf",
+        temp("results/snps/mkdir.txt"),
 
-use rule maketdf from bam2bakr as bam2bakr_maketdf
+use rule maketdf from bam2bakr as bam2bakr_maketdf with:
+    input:
+        "results/counts/{sample}_counts.csv.gz",
+        "results/htseq/{sample}_tl.bam",
+	    "results/normalization/scale",
+        "resources/genome.fasta",
+    params:
+        mut_tracks = config["mut_tracks"],
+        wsl = config["WSL"],
+        normalize = config["normalize"],
+        shellscript = workflow.source_path("scripts/tracks.sh"),
+        pythonscript = workflow.source_path("scripts/count_to_tracks.py"),
+        strandedness = lambda wildcards: "F" if unique(get_strandedness(units)) == 'forward' else "R"
+    output:
+        temp("results/tracks/{sample}_success.txt"),
+        expand("results/tracks/{{sample}}.{mut}.{id}.{strand}.tdf", mut=config["mut_tracks"], id=[0,1,2,3,4,5], strand = ['pos', 'min'])
 
 use rule cnt_muts from bam2bakr as bam2bakr_cnt_muts with:
-    params:    
+    input:
+        "results/htseq/{sample}_tl.bam",
+        "results/snps/snp.txt"
+    params:
         format = lambda wildcards: "SE" if get_format(wildcards) else "PE",
         minqual = config["minqual"],
         mut_tracks = config["mut_tracks"],
         strand = lambda wildcards: "F" if unique(get_strandedness(units)) == 'forward' else "R",
         shellscript = workflow.source_path("scripts/mut_call.sh"),
         pythonscript = workflow.source_path("scripts/mut_call.py"),
-        awkscript = workflow.source_path("scripts/fragment_sam.awk")
+        awkscript = workflow.source_path("scripts/fragment_sam.awk") 
+    output:
+        "results/counts/{sample}_counts.csv.gz",
+        temp("results/counts/{sample}_check.txt")
 
 use rule makecB from bam2bakr as bam2bakr_makecB with:
     input:
         expand("results/counts/{sample}_counts.csv.gz", sample=SAMP_NAMES)
-
+    params:
+        mut_tracks = config["mut_tracks"],
+        keepcols = config["keepcols"],
+        shellscript = workflow.source_path("scripts/master.sh")
+    output:
+        "results/cB/cB.csv.gz"
 
 
 
