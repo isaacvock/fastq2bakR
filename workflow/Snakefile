@@ -38,8 +38,6 @@ module bam2bakr:
         github("simonlabcode/bam2bakR", path = "workflow/Snakefile", branch="main")
     config:
         config
-    include:
-        "rules/bam2bakr.smk"
 
 use rule * from bam2bakr exclude index and all as bam2bakr_*
 
