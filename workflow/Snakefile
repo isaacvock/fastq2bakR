@@ -39,7 +39,7 @@ module bam2bakr:
     config:
         config
 
-use rule * from bam2bakr exclude index and all as bam2bakr_*
+# use rule * from bam2bakr exclude index and all as bam2bakr_*
 
 
 #### Modify bam2bakR rules to use fastq2bakR config and functions
@@ -67,6 +67,8 @@ use rule call_snps from bam2bakr as bam2bakr_call_snps with:
     params:
         nsamps = nctl,
         shellscript = workflow.source_path("scripts/call_snps.sh")
+
+use rule maketdf from bam2bakr as bam2bakr_maketdf
 
 use rule cnt_muts from bam2bakr as bam2bakr_cnt_muts with:
     params:    
