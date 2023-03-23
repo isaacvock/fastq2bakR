@@ -43,7 +43,7 @@ module bam2bakr:
 
 
 #### Modify bam2bakR rules to use fastq2bakR config and functions
-use rule sort_filter from bam2bakr as bam2bakr_sort_filter with:
+use rule sort_filter from bam2bakr with:
     input:
         "results/merge_bams/{sample}.merged.bam",
     params:
@@ -54,7 +54,7 @@ use rule sort_filter from bam2bakr as bam2bakr_sort_filter with:
         "results/sf_reads/{sample}_fixed_mate.bam",
         "results/sf_reads/{sample}.f.sam",
 
-use rule htseq_cnt from bam2bakr as bam2bakr_htseq_cnt with:
+use rule htseq_cnt from bam2bakr with:
     input:
         "results/sf_reads/{sample}.s.sam",
         "resources/genome.gtf",
@@ -66,7 +66,7 @@ use rule htseq_cnt from bam2bakr as bam2bakr_htseq_cnt with:
         pythonscript=workflow.source_path("../scripts/count_triple.py"),
         strand = lambda wildcards: "yes" if unique(get_strandedness(units)) == 'forward' else "reverse"
 
-use rule normalize from bam2bakr as bam2bakr_normalize with:
+use rule normalize from bam2bakr with:
     input:
         expand("results/htseq/{sample}_tl.bam", sample = SAMP_NAMES)
     output:
@@ -75,7 +75,7 @@ use rule normalize from bam2bakr as bam2bakr_normalize with:
         spikename = config["spikename"],
         rscript=workflow.source_path("scripts/normalize.R")
 
-use rule call_snps from bam2bakr as bam2bakr_call_snps with:
+use rule call_snps from bam2bakr with:
     input:
         "resources/genome.fasta",
         expand("results/htseq/{ctl}_tl.bam", ctl = CTL_NAMES)
@@ -87,7 +87,7 @@ use rule call_snps from bam2bakr as bam2bakr_call_snps with:
         "results/snps/snp.vcf",
         temp("results/snps/mkdir.txt"),
 
-use rule maketdf from bam2bakr as bam2bakr_maketdf with:
+use rule maketdf from bam2bakr with:
     input:
         "results/counts/{sample}_counts.csv.gz",
         "results/htseq/{sample}_tl.bam",
@@ -104,7 +104,7 @@ use rule maketdf from bam2bakr as bam2bakr_maketdf with:
         temp("results/tracks/{sample}_success.txt"),
         expand("results/tracks/{{sample}}.{mut}.{id}.{strand}.tdf", mut=config["mut_tracks"], id=[0,1,2,3,4,5], strand = ['pos', 'min'])
 
-use rule cnt_muts from bam2bakr as bam2bakr_cnt_muts with:
+use rule cnt_muts from bam2bakr with:
     input:
         "results/htseq/{sample}_tl.bam",
         "results/snps/snp.txt"
@@ -120,7 +120,7 @@ use rule cnt_muts from bam2bakr as bam2bakr_cnt_muts with:
         "results/counts/{sample}_counts.csv.gz",
         temp("results/counts/{sample}_check.txt")
 
-use rule makecB from bam2bakr as bam2bakr_makecB with:
+use rule makecB from bam2bakr with:
     input:
         expand("results/counts/{sample}_counts.csv.gz", sample=SAMP_NAMES)
     params:
