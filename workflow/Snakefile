@@ -58,9 +58,12 @@ use rule htseq_cnt from bam2bakr as bam2bakr_htseq_cnt with:
     input:
         "results/sf_reads/{sample}.s.sam",
         "resources/genome.gtf",
-    params:
-        shellscript=workflow.source_path("scripts/htseq.sh"),
-        pythonscript=workflow.source_path("scripts/count_triple.py"),
+    output:
+        "results/htseq/{sample}_tl.bam",
+        temp("results/htseq/{sample}_check.txt")
+    params: 
+        shellscript=workflow.source_path("../scripts/htseq.sh"),
+        pythonscript=workflow.source_path("../scripts/count_triple.py"),
         strand = lambda wildcards: "yes" if unique(get_strandedness(units)) == 'forward' else "reverse"
 
 use rule normalize from bam2bakr as bam2bakr_normalize with:
