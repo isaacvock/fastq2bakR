@@ -37,7 +37,7 @@ module bam2bakr:
     snakefile:
         github("simonlabcode/bam2bakR", path = "workflow/Snakefile", branch="develop")
     config:
-        config
+        config["bam2bakr"]
 
 # use rule * from bam2bakr exclude index and all as bam2bakr_*
 
