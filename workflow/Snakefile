@@ -35,7 +35,7 @@ include: "rules/diffexp.smk"
 
 module bam2bakr:
     snakefile:
-        github("simonlabcode/bam2bakR", path = "workflow/Snakefile", branch="main")
+        github("simonlabcode/bam2bakR", path = "workflow/Snakefile", branch="develop")
     config:
         config
 
