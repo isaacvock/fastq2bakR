@@ -60,3 +60,23 @@ normalize: True
 
 # Are you using the Windows subsystem for linux? 0 = Yes, 1 = No
 WSL: 1
+
+### bam2bakR parameters to not change ###
+FORMAT: "PE"
+
+# Strandedness of reads
+strandedness: "F" # (F, R); F means read 1 represents original RNA sequence (vs. its reverse complement).
+
+# whether to make .tdf files or not
+make_tracks: True
+
+# sample IDs of -s4U control bam files (or leave blank if you have none)
+# Needs to be same sample ID(s) that show up under samples entry
+control_samples: ["KO_ctl"]
+
+
+# location of annotation gtf file
+annotation: data/annotation/GRCh38.gtf
+
+# location of genome fasta file
+genome_fasta: data/genome/GRCh38.fasta
